@@ -6,5 +6,5 @@ if not find_dotenv():
 else:
     load_dotenv()
 
-COOKIE = os.getenv("COOKIE")
-USER_AGENT = os.getenv("USER_AGENT")
+COOKIE: str = os.getenv("COOKIE")
+USER_AGENT: str = os.getenv("USER_AGENT")

@@ -5,7 +5,7 @@ class Films:
     def __init__(self) -> None:
         self.films = dict()
 
-    def added_film(self, film_name, genre, author, link) -> None:
+    def added_film(self, film_name: str, genre: str, author: str, link: str) -> None:
         """
         Функция для добавления информации о фильме в класс.
         Добавляется информация о фильме, а также прибавляется 1 к общему кол-ву фильмов.

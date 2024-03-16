@@ -1,10 +1,11 @@
 import random
-import requests
 import re
 from config import COOKIE, USER_AGENT
 from typing import Tuple
 
+import requests
 import pandas as pd
+from requests import Response
 from bs4 import BeautifulSoup
 
 
@@ -13,7 +14,7 @@ def start_kinopoisk_parser() -> None:
     Функция обращается к страницам сайта с помощью запроса GET 5 раз, так как на сайте именно 5 страниц с фильмами.
     С результатом запроса запускаем функцию-парсер.
     """
-    choice = ask_user()
+    choice: int = ask_user()
     films = dict()
     headers = {
         "Cookie": COOKIE,
@@ -21,7 +22,7 @@ def start_kinopoisk_parser() -> None:
     }
 
     for page in range(1, 6):
-        kinopoisk_response = requests.get(
+        kinopoisk_response: Response = requests.get(
             f"https://www.kinopoisk.ru/lists/movies/top250/?utm_referrer=www.kinopoisk.ru&page={page}",
             headers=headers
         )
@@ -40,8 +41,8 @@ def ask_user() -> int:
     :return: Выбор пользователя int 1 or 2
     """
     while True:
-        choice = input("\nЧто сделаем? "
-                       "\n1 - Выгрузить неоцененные фильмы в экселе; "
+        choice = input("\nЧто сделаем?"
+                       "\n1 - Выгрузить неоцененные фильмы в экселе;"
                        "\n2 - Выдать случайный фильм по жанру.\n")
 
         if choice.isalpha():
@@ -61,7 +62,7 @@ def parser_website(response, films) -> None:
     :param response: Ответ от сервера
     :param films: Словарь с фильмами
     """
-    text_response = response.text
+    text_response: str = response.text
     soup = BeautifulSoup(text_response, "html.parser")
     all_films = soup.find_all("div", class_="styles_root__ti07r")
 
