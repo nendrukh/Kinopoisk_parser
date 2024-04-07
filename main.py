@@ -6,7 +6,7 @@ from typing import Tuple
 import requests
 import pandas as pd
 from requests import Response
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, PageElement
 
 
 def start_kinopoisk_parser() -> None:
@@ -55,12 +55,12 @@ def ask_user() -> int:
     return int(choice)
 
 
-def parser_website(response, films) -> None:
+def parser_website(response: Response, films: dict) -> None:
     """
     Функция-парсер. Находим все фильмы на странице и проходимся по ним циклом.
     Если на фильме нет оценки, значит фильм не просмотрен, собираем по нему информацию и добавляем в словарь.
-    :param response: Ответ от сервера
-    :param films: Словарь с фильмами
+    :param response:(Response) Ответ от сервера
+    :param films:(dict) Словарь с фильмами
     """
     text_response: str = response.text
     soup = BeautifulSoup(text_response, "html.parser")
@@ -72,10 +72,10 @@ def parser_website(response, films) -> None:
             added_film(films, film_name, genre, author, link)
 
 
-def take_info_about_film(film) -> Tuple[str, str, str, str]:
+def take_info_about_film(film: PageElement) -> Tuple[str, str, str, str]:
     """
     Достаем информацию о непросмотренном фильме.
-    :param film: Непросмотренный фильм из html страницы сайта
+    :param film:(PageElement) Непросмотренный фильм из html страницы сайта
     :return: Название фильма, ссылку на фильм, жанр фильма и режиссёр
     """
     try:
@@ -99,11 +99,11 @@ def take_info_about_film(film) -> Tuple[str, str, str, str]:
 def added_film(films: dict, film_name: str, genre: str, author: str, link: str) -> None:
     """
     Добавление фильма со всей необходимой о нем информацией в словарь с фильмами
-    :param films: Словарь с непросмотренными фильмами и с их информацией.
-    :param film_name: Название фильма
-    :param genre: Жанр фильма
-    :param author: Режиссёр фильма
-    :param link: Ссылка на страницу фильма
+    :param films:(dict) Словарь с непросмотренными фильмами и с их информацией.
+    :param film_name:(str) Название фильма
+    :param genre:(str) Жанр фильма
+    :param author:(str) Режиссёр фильма
+    :param link:(str) Ссылка на страницу фильма
     """
     films[film_name] = {
         "genre": genre,
@@ -116,7 +116,7 @@ def upload_movie_excel(films: dict) -> None:
     """
     Загрузка фильмов в эксель.
     Выгружаем все фильмы с их параметрами в отдельные списки list и записываем в data frame
-    :param films: Словарь всех непросмотренных фильмов
+    :param films:(dict) Словарь всех непросмотренных фильмов
     """
     films_name = films.keys()
     genres = [film.get("genre") for film in films.values()]
@@ -133,12 +133,12 @@ def upload_movie_excel(films: dict) -> None:
     print("Файл эксель загружен в текущую директиву")
 
 
-def get_random_film(films) -> None:
+def get_random_film(films: dict) -> None:
     """
     Отдаем пользователю случайный непросмотренный фильм.
     Предаврительно собираем все жанры из непросмотренных фильмов
     и отдаем их список пользователю, чтобы выбрал, написав название
-    :param films: Словарь всех непросмотренных фильмов
+    :param films:(dict) Словарь всех непросмотренных фильмов
     """
     all_genres = set([film.get("genre") for film in films.values()])
     print(f"\nНапиши жанр фильма из доступных по твоим непросмотренным фильмам: \n{', '.join(all_genres)}")
